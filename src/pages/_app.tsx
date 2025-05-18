@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const config = getDefaultConfig({
   appName: 'DeFi Portfolio Tracker',
-  projectId: '8285ac28eee61739fcae09fa4696db92', // your projectId here
+  projectId: process.env.NEXT_PUBLIC_PROJECtT_ID as string, // your projectId here
   chains: [mainnet, polygon, optimism, arbitrum],
   transports: {
     [mainnet.id]: http(),

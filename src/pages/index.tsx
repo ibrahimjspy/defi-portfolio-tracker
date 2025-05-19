@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -23,15 +22,22 @@ type Token = {
   usdValue?: number;
 };
 
+const SUPPORTED_CHAINS = [
+  { name: 'Ethereum Mainnet', value: 'mainnet' },
+  { name: 'Sepolia Testnet', value: 'sepolia' },
+  // Add more chains here if you want (e.g. Polygon, Mumbai)
+];
+
 export default function Home() {
   const { address, isConnected } = useAccount();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(false);
+  const [chain, setChain] = useState('sepolia'); // Default to Sepolia
 
   useEffect(() => {
-    if (address) {
+    if (address && chain) {
       setLoading(true);
-      fetch(`/api/balances?address=${address}`)
+      fetch(`/api/balances?address=${address}&chain=${chain}`)
         .then((res) => res.json())
         .then((data) => {
           setTokens(data.tokens || []);
@@ -40,7 +46,7 @@ export default function Home() {
     } else {
       setTokens([]);
     }
-  }, [address]);
+  }, [address, chain]);
 
   // Total portfolio USD value
   const totalValue = tokens.reduce((sum, t) => sum + (t.usdValue || 0), 0);
@@ -61,6 +67,30 @@ export default function Home() {
         DeFi Portfolio Tracker
       </h1>
       <ConnectButton />
+
+      {/* Chain selector */}
+      <div style={{ margin: '16px 0' }}>
+        <label>
+          <span style={{ marginRight: 8, fontWeight: 500 }}>Network:</span>
+          <select
+            value={chain}
+            onChange={(e) => setChain(e.target.value)}
+            style={{
+              padding: '6px 14px',
+              borderRadius: 6,
+              border: '1px solid #ddd',
+              fontSize: 16,
+            }}
+          >
+            {SUPPORTED_CHAINS.map((net) => (
+              <option key={net.value} value={net.value}>
+                {net.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       {isConnected && (
         <div
           style={{
@@ -83,7 +113,10 @@ export default function Home() {
             <span style={{ color: '#888' }}>Connected:</span>{' '}
             <span style={{ fontFamily: 'monospace' }}>{address}</span>
           </div>
-
+          <div style={{ color: '#888', marginBottom: 10, fontSize: 15 }}>
+            Viewing network:{' '}
+            <b>{SUPPORTED_CHAINS.find((x) => x.value === chain)?.name}</b>
+          </div>
           <div style={{ margin: '16px 0', fontWeight: 700, fontSize: 20 }}>
             Total Portfolio Value: ${totalValue.toFixed(2)}
           </div>

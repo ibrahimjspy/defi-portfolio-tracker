@@ -35,7 +35,7 @@ Tracks your wallet’s ERC-20 token balances and their live USD value, showing p
 1. **Clone the Repo**
 
    ```bash
-   git clone https://github.com/yourusername/defi-portfolio-tracker.git
+   git clone https://github.com/ibrahimjspy/defi-portfolio-tracker.git
    cd defi-portfolio-tracker
    ```
 
